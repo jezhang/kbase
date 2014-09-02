@@ -147,14 +147,8 @@ Maven依赖机制会自动下载项目所必须依赖的包，同时维护依赖
     5. 所有事情都必须由你完成。
     6. 如果Log4j版本升级，你需要重复以上步骤
   2. 使用Maven
-    1. 你需要知道log4j Maven coordinates, 例如：
-    ```xml
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>1.2.14</version>
-    ```
-    它会自动下载log4j1.2.14版本，如果没有指定版本号，它会更新到最新版本。
-    2. 在"pom.xml"中定义 Maven coordinates 
+    1. 你需要知道log4j Maven coordinates, 例如：log4j。它会自动下载指定版本，如果没有指定版本号，它会更新到最新版本。
+    2. 在"pom.xml"中定义 Maven coordinate
     ```xml
         <dependencies>
             <dependency>
@@ -171,3 +165,40 @@ Maven依赖机制会自动下载项目所必须依赖的包，同时维护依赖
 访问[Maven center repository](http://search.maven.org/)，查找你想要jar包的名称即可。
 
 [参考资料](http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html)
+
+##如何添加自定义类库到Maven本地仓库##
+假如你写了一个jar包，名称叫"xxx"，你想把它加入到本地Maven库给其他人使用。
+```sh
+mvn install:install-file -Dfile=c:\xxx-{version}.jar -DgroupId=com.google.code 
+-DartifactId=kaptcha -Dversion={version} -Dpackaging=jar
+```
+输出：
+```sh
+D:\>mvn install:install-file -Dfile=c:\xxx-2.0.jar -DgroupId=com.abc.code 
+-DartifactId=xxx -Dversion=2.0 -Dpackaging=jar
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'install'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Default Project
+[INFO]    task-segment: [install:install-file] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] [install:install-file]
+[INFO] Installing c:\xxx-2.0.jar to 
+D:\maven_repo\com\abc\code\xxx\2.0\xxx-2.0.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: < 1 second
+[INFO] Finished at: Tue May 12 13:41:42 SGT 2009
+[INFO] Final Memory: 3M/6M
+[INFO] ------------------------------------------------------------------------
+```
+安装完成，只要在"pom.xml"中定义abc coordinate即可：
+```xml
+    <dependency>
+        <groupId>com.google.code</groupId>
+        <artifactId>kaptcha</artifactId>
+        <version>2.3</version>
+    </dependency>
+```
+构建，"xxx" jar包会从本地Maven库中获取到。
