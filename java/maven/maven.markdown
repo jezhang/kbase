@@ -720,6 +720,7 @@ mvn eclipse:eclipse -Dwtpversion=2.0
 ```
 > 重要！
 > 许多开发人员在这里发生问题，他们无法执行启动和调试在Eclipse server插件里面，错误消息是“依赖无法找到”，右击你的项目点属性，确保所有的依赖关系部署在组件内。否则运行```mvn eclipse:eclipse -Dwtpversion=2.0```
+
 ###7. Maven打包###
 再次打开```pom.xml```，```packaging```定义了格式和输出
 ```xml
