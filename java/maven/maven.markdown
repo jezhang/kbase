@@ -462,14 +462,12 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ```sh
 mvn archetype:generate -DgroupId={project-packaging} -DartifactId={project-name} -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
 ```
-这条命令告诉maven使用“**maven-archetype-webapp**”模版新建一个Java web application项目
-> 例如
+这条命令告诉maven使用“**maven-archetype-webapp**”模版新建一个Java web application项目，例如：
+
 ```sh
 $ pwd
-/Users/jezhang/Documents/workspace
- 
+/Users/jezhang/Documents/workspace 
 $ mvn archetype:generate -DgroupId=info.woodchat -DartifactId=CounterWebApp -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
-
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
