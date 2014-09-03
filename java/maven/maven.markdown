@@ -469,6 +469,7 @@ $ pwd
 /Users/jezhang/Documents/workspace
  
 $ mvn archetype:generate -DgroupId=info.woodchat -DartifactId=CounterWebApp -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
+
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
@@ -494,9 +495,11 @@ $ mvn archetype:generate -DgroupId=info.woodchat -DartifactId=CounterWebApp -Dar
 [INFO] Final Memory: 12M/128M
 [INFO] ------------------------------------------------------------------------
 ```
+
 在上面的案例中，一个名为“**CounterWebApp**”web application项目被自动建好了，包含整个项目目录结构
 ###2. Maven目录布局设计###
 Maven建好web application目录结构，并且建好一个标准的部署描述符```web.xml```和一个Maven```pom.xml```
+
 ```java
 CounterWebApp
    |-src
