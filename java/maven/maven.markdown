@@ -614,7 +614,7 @@ mvn eclipse:eclipse -Dwtpversion=2.0
   <build>
     <finalName>CounterWebApp</finalName>
     <plugins>
-      <plugin>        <groupId>org.apache.maven.plugins</groupId>
+      <plugin><groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.0</version>
         <configuration>
@@ -665,7 +665,7 @@ public class BaseController {
         http://www.springframework.org/schema/context/spring-context-3.0.xsd"> 
   <context:component-scan base-package="info.woodchat.controller" />
  
-  <bean   class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="prefix">
       <value>/WEB-INF/pages/</value>
     </property>
@@ -679,13 +679,12 @@ public class BaseController {
 ```xml
 <!--/src/main/webapp/WEB-INF/web.xml-->
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5"> 
   <display-name>Counter Web Application</display-name> 
   <servlet>
     <servlet-name>mvc-dispatcher</servlet-name>
-    <servlet-class>     org.springframework.web.servlet.DispatcherServlet
-    </servlet-class>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet> 
   <servlet-mapping>
@@ -697,8 +696,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <param-value>/WEB-INF/mvc-dispatcher-servlet.xml</param-value>
   </context-param> 
   <listener>
-    <listener-class>      org.springframework.web.context.ContextLoaderListener
-    </listener-class>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
 </web-app>
 ```
@@ -763,3 +761,6 @@ Yongs-MacBook-Air:CounterWebApp jezhang$ mvn package
 启动web项目
 <http://localhost:8080/CounterWebApp/welcome>
 
+
+##如何使用Maven模版创建项目##
+Maven拥有多余40种模版方便开发者快速创建Java项目。通过Maven命令"```mvn archetype:generate```"asdf
