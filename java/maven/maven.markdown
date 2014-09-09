@@ -1316,3 +1316,274 @@ D:\workspace-new>mvn clean
 当"mvn clean"执行完后，"**target**"文件夹所有的内容都会被删除。
 
 > 想要部署你的项目到生产系统，总是建议执行"```mvn clean package```"来确保得到最新的部署包。
+
+
+##如何使用Maven运行单元测试##
+```sh
+mvn test
+```
+将会运行项目所有的单元测试类。
+
+###案例学习###
+新建2个unit case，下面是Java类
+```java
+package info.woodchat.core; 
+public class App {
+  public static void main(String[] args) { 
+    System.out.println(getHelloWorld()); 
+  } 
+  public static String getHelloWorld() { 
+    return "Hello World"; 
+  } 
+  public static String getHelloWorld2() { 
+    return "Hello World 2"; 
+  }
+}
+```
+
+####Unit Test 1####
+
+```java
+package info.woodchat.core.test; 
+import junit.framework.Assert;
+import org.junit.Test; 
+public class TestApp1 { 
+  @Test
+  public void testPrintHelloWorld() { 
+    Assert.assertEquals(App.getHelloWorld(), "Hello World"); 
+  } 
+}
+
+```
+
+####Unit Test 2####
+```java
+package info.woodchat.core; 
+import junit.framework.Assert;
+import org.junit.Test; 
+public class TestApp2 { 
+  @Test
+  public void testPrintHelloWorld2() { 
+    Assert.assertEquals(App.getHelloWorld2(), "Hello World 2"); 
+  } 
+}
+```
+
+####Run Unit Test####
+1. 运行所有unit test(TestApp1和TestApp)
+```sh
+mvn test
+```
+
+2.运行TestApp1的unit test
+```sh
+mvn -Dtest=TestApp1 test
+```
+
+3.运行TestApp2的unit test
+```sh
+mvn -Dtest=TestApp2 test
+```
+
+
+##如何安装你的项目到本地Maven库##
+在Maven中，你可以使用```mvn install```来打包你的项目并且部署到你的本地仓库中，这样其它开发人员可以使用。
+```sh
+mvn install
+```
+
+###mvn install样例###
+一个Java项目，有一个```pom.xml```文件
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+  http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>info.woodchat.core</groupId>
+  <artifactId>woodchat-core</artifactId>
+  <packaging>jar</packaging>
+  <version>99</version>
+  <name>woodchat-core</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+```
+
+根据上面的```pom.xml```文件，当执行玩```mvn instal```，将会自动打包到"```woodchat-core-99.jar"文件并且复制到你本地仓库。
+
+> 建议：一起运行"**clean**"和"**install**"，这样总会部署一个最新的项目到本地仓库
+
+```sh
+mvn clean install
+```
+
+###访问你部署的项目###
+现在，其它开发人员将能访问你部署的“jar”通过在```pom.xml```文件中申明下面的依赖
+```xml
+<dependency>
+    <groupId>info.woodchat.core</groupId>
+    <artifactId>woodchat-core</artifactId>
+    <version>99</version>
+ </dependency>
+```
+
+
+##如何为基于Maven的项目生成一个文档站点##
+在Maven中，你可以使用下面的命令为你的项目生成一个文档站点
+```sh
+mvn site
+```
+
+生成的文档将会存放在"**target/site**"文件夹中
+
+
+##如何部署基于Maven的项目到Tomcat中##
+在这一节中，我们讲演示如何使用[Maven-Tomcat plugin](http://tomcat.apache.org/maven-plugin.html)来打包并且部署一个WAR文件到Tomcat中。Tomcat6 和 Tomcat7
+
+###1. Tomcat 7 例子###
+这个例子演示如何打包部署一个WAR文件到Tomcat7
+####1.1 Tomcat Authentication####
+添加一个用户角色```manager-gui```和```manager-script```
+```xml
+<!--%TOMCAT7_PATH%/conf/tomcat-users.xml-->
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users> 
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <user username="admin" password="password" roles="manager-gui,manager-script" /> 
+</tomcat-users>
+```
+
+####1.2 Maven Authentication####
+添加上面的Tomcat用户到Maven settings文件，这样Maven可以使用这个用户登录Tomcat server
+```xml
+<!--%MAVEN_PATH%/conf/settings.xml-->
+<?xml version="1.0" encoding="UTF-8"?>
+<settings ...>
+  <servers> 
+    <server>
+      <id>TomcatServer</id>
+      <username>admin</username>
+      <password>password</password>
+    </server> 
+  </servers>
+</settings>
+```
+
+####1.3 添加Tomcat7 Maven Plugin到```pom.xml```文件####
+定义一个Maven Tomcat plugin
+```xml
+  <!--pom.xml-->
+  <plugin>
+    <groupId>org.apache.tomcat.maven</groupId>
+    <artifactId>tomcat7-maven-plugin</artifactId>
+    <version>2.2</version>
+    <configuration>
+      <url>http://localhost:8080/manager/text</url>
+      <server>TomcatServer</server>
+      <path>/woodchatWebApp</path>
+    </configuration>
+  </plugin>
+```
+
+在部署过程中，它告诉Maven通过"http://localhost:8080/manager/text"部署一个WAR文件到Tomcat server，访问路径为"/woodchatWebApp", 使用"TomcatServer"(在settings.xml) 
+
+####1.4 部署到Tomcat####
+```sh
+mvn tomcat7:deploy
+mvn tomcat7:undeploy
+mvn tomcat7:redeploy
+```
+例子
+```sh
+> mvn tomcat7:deploy 
+...
+[INFO] Deploying war to http://localhost:8080/woodchatWebApp
+Uploading: http://localhost:8080/manager/text/deploy?path=%2FwoodchatWebApp&update=true
+Uploaded: http://localhost:8080/manager/text/deploy?path=%2FwoodchatWebApp&update=true (13925 KB at 35250.9 KB/sec)
+ 
+[INFO] tomcatManager status code:200, ReasonPhrase:OK
+[INFO] OK - Deployed application at context path /woodchatWebApp
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.507 s
+[INFO] Finished at: 2014-08-05T11:35:25+08:00
+[INFO] Final Memory: 28M/308M
+[INFO] ------------------------------------------------------------------------
+```
+
+###2. Tomcat 6 例子###
+这个例子演示如何打包部署一个WAR文件到Tomcat 6。步骤和Tomcat 7一样，只是部署的url和命令不同
+####2.1Tomcat Authentication
+```
+<!--%TOMCAT6_PATH%/conf/tomcat-users.xml-->
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users> 
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <user username="admin" password="password" roles="manager-gui,manager-script" /> 
+</tomcat-users>
+```
+
+####2.2Maven Authentication####
+```xml
+<!--%MAVEN_PATH%/conf/settings.xml-->
+<?xml version="1.0" encoding="UTF-8"?>
+<settings ...>
+  <servers> 
+    <server>
+      <id>TomcatServer</id>
+      <username>admin</username>
+      <password>password</password>
+    </server> 
+  </servers>
+</settings>
+```
+
+####2.3Tomcat6 Maven Plugin####
+```xml
+  <!--pom.xml-->
+  <plugin>
+    <groupId>org.apache.tomcat.maven</groupId>
+    <artifactId>tomcat6-maven-plugin</artifactId>
+    <version>2.2</version>
+    <configuration>
+      <url>http://localhost:8080/manager</url>
+      <server>TomcatServer</server>
+      <path>/woodchatWebApp</path>
+    </configuration>
+  </plugin>
+```
+
+####2.4部署到Tomcat 6####
+mvn tomcat6:deploy 
+mvn tomcat6:undeploy 
+mvn tomcat6:redeploy
+```
+
+例子
+```sh
+> mvn tomcat6:deploy
+...
+[INFO] Deploying war to http://localhost:8080/woodchatWebApp
+Uploading: http://localhost:8080/manager/deploy?path=%2FwoodchatWebApp
+Uploaded: http://localhost:8080/manager/deploy?path=%2FwoodchatWebApp (13925 KB at 32995.5 KB/sec)
+ 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 22.652 s
+[INFO] Finished at: 2014-08-05T12:18:54+08:00
+[INFO] Final Memory: 30M/308M
+[INFO] ------------------------------------------------------------------------
+```
+
