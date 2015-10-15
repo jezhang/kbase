@@ -2,7 +2,7 @@
 ========
 [Java API for XML Web Services(JAX-WS)](http://jax-ws.java.net/), 是一系列的API用来创建XML格式(SOAP)的web service，JAX-WS提供了许多注解来简化web service客户端和web service服务端的开发和部署工作。
 
-
+<a name="rpcstyle"></a>
 ##JAX-WS hello world example - RPC style##
 JDK 1.6绑定了JAX-WS，这意味着更容易去开发Java web service。这一节介绍如何完成下面的任务：
   1. 使用JAX-WS建立一个基于SOAP RPC的web service
@@ -288,6 +288,15 @@ Content-type: text/xml; charset=utf-8
 完成。
 
 ##JAX-WS Hello World Example – Document Style##
+在这一节的教程里，我们演示如何使用JAX-WS来闯一个一个基于SOAP的web service(文档)终端，对比 [RPC Style](#user-content-rpcstyle)，需要一些额外的工作量。
+###JAX-WS Web Service End Point###
+
+####1.建立一个Web Service终端接口####
+实际上，```@SOAPBinding```注解是可选的，默认style就是文档
+File : HelloWorld.java
+````java
+
+```
 
 ##How to trace SOAP message in Eclipse IDE##
 
