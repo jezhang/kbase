@@ -342,8 +342,135 @@ cmd;
 echo $?;
 ```
 
+### 1.12 读取命令序列输出
 
+shell脚本最棒的特性之一就是可以轻松地将多个命令或工具组合起来生成输出。一个命令的输出可以作为另一个命令的输入，而这个命令的输出又会传递至另一个命令，以此类推。这些命令被称为过滤器(filter)。我们使用管道(pipe)来连接每一个过滤器。管道的操作符是“|”。例如：
+```sh
+$ cmd1 | cmd2 | cmd3
+#请看下面的代码：
+$ ls -a | cat -n > out.txt
+#ls的输出（当前目录内容的列表）被传给cat -n,cat -n为通过stdin所接收到输入内容加上行号，然后将输出重定向到文件output.txt
 
+#我们也可以用下面的方法读取命令序列的输出
+cmd_output=$(COMMANDS)
+#这种方法也被称为子shell(subshell)。例如：
+$ cmd_output=$(ls | cat -n)
+$ echo $cmd_output
+```
+
+### 1.13 以不按回车键的方式读取字符“n”
+
+```sh
+# 下面的语句从输入中读取n个字符并存入变量中
+read -n number_of_chars variable_name
+$ read -n 2 var
+$ echo $var
+
+# 用不回显(non-echoed)的方式读取密码
+$ read -s passwd
+
+# 显示提示信息
+$ read -p "Enter input:" var
+
+# 在特定时限内读取输入
+$ read -t timeout var
+
+# 用定界符结束输入行：
+$ read -d delim_char var
+$ read -d ":" var
+```
+
+### 1.14 字符分隔符和迭代器
+
+内部字段分隔符(Internal Field Separator, IFS)
+
+```sh
+data="name,sex,rollno,location"
+oldIFS=$IFS
+IFS=,
+for item in $data;
+do
+    echo Item: $item
+done
+#输出如下:
+Item: name
+Item: sex
+Item: rollno
+Item: location
+```
+
+考虑这样的输入：root:x:0:0:root:/root:/bin/bash。每行的最后一项指定了用户的默认shell。可以按照下面的方法巧妙地利用IFS打印出用户以及他们默认的shell
+
+```sh
+#!/bin/bash
+line="root:x:0:0:root:/root:/bin/bash"
+oldIFS=$IFS
+IFS=":"
+count=0
+for item in $line;
+do
+    [ $count -eq 0 ] && user=$item;
+    [ $count -eq 6 ] && shell=$item;
+    let count++
+done;
+IFS=$oldIFS
+echo $user\'s shell is $shell;
+```
+
+for循环
+```sh
+for var in list;
+do
+commands; # 使用变量$var
+done;
+# list can be a string, or a sequence.
+
+echo {1..50} #能够生成一个从1到50的数字列表
+echo {a..z} 
+echo {A..Z}
+echo {a..h}
+
+# for 循环也可以采用C语言中for循环格式。例如：
+for((i=0;i<10;i++)) {
+    commands; # 使用变量$i
+}
+```
+
+while循环
+```sh
+while condition
+do
+    commands;
+done
+```
+
+util循环
+```sh
+x=0;
+until [ $x -eq 9 ]; # [ $x -eq 9 ] is the condition
+do let x++; echo $x;
+done
+```
+
+### 1.15 比较与测试
+
+if条件
+```sh
+if condition;
+then
+commands;
+fi
+```
+
+else if和else:
+```sh
+if condition;
+then
+    commands
+else
+    commands
+fi
+```
 
 
 
