@@ -253,4 +253,4 @@ r'[\s\,\;]+'的正则表达式意思为：空格或者,或者;出现1次或1次�
 
 
 ## Python正则表达式学习资源
-![regex cheetsheet](img/regex.jgp)
+![regex cheetsheet](img/regex.jpg)
