@@ -27,4 +27,9 @@ docker run -it --rm -p 443:443 -p 80:80 --name certbot \
             -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
             certbot/certbot certonly
 
+
+# 装个ubuntu玩玩
+# https://segmentfault.com/a/1190000009485188
+docker run -t -i ubuntu:14.04 /bin/bash
+
 ```
