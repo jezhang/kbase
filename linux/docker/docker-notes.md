@@ -18,8 +18,12 @@ docker run --name jezhang_wp -p 8881:80 --link mysql:mysql -v /root/jezhang_wp:/
 
 # docker startup a nginx
 docker exec -it nginx /bin/bash
+
 docker run --name nginx -p 80:80 -p 443:443 -v /root/nginx/conf.d:/etc/nginx/con                                                                                        f.d -d nginx
+
 docker run --name nginx -p 80:80 -p 443:443 -v /root/nginx/conf.d:/etc/nginx/con                                                                                        f.d -v /root/nginx/tcp.d:/etc/nginx/tcp.d  -v /etc/letsencrypt:/etc/letsencrypt                                                                                          -v /root/nginx/nginx.conf:/etc/nginx/nginx.conf:rw -d nginx
+
+docker run --name nginx -p 80:80 -p 443:443 -v /root/nginx/conf.d:/etc/nginx/conf.d -v /root/nginx/tcp.d:/etc/nginx/tcp.d -v /etc/letsencrypt:/etc/letsencrypt -v /root/nginx/nginx.conf:/etc/nginx/nginx.conf:rw -v /root/downloads:/root/downloads -d nginx
 
 # docker generate a certificate
 docker run -it --rm -p 443:443 -p 80:80 --name certbot \
@@ -31,5 +35,6 @@ docker run -it --rm -p 443:443 -p 80:80 --name certbot \
 # 装个ubuntu玩玩
 # https://segmentfault.com/a/1190000009485188
 docker run -t -i ubuntu:14.04 /bin/bash
+docker run --name ubuntu -v /root/downloads:/root/downloads -t -i ubuntu:14.04 /bin/bash
 
 ```
