@@ -17,7 +17,7 @@ docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -d mysql
 # docker启动mysql命令行
 docker exec -it mysql /bin/bash
 
-docker run --name mysql -p 3306:3306 -v /root/databases/:/var/lib/mysql/ -e MYSQL_ROOT_PASSWORD=root -d mysql
+docker run --name mysql -p 3308:3306 -v /root/mysql/:/var/lib/mysql/ -e MYSQL_ROOT_PASSWORD=root -d mysql
 
 # 查看实时得的mysql log
 docker logs mysql -f
@@ -44,6 +44,9 @@ docker run -it --rm -p 443:443 -p 80:80 --name certbot \
             -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
             certbot/certbot certonly
 
+# docker run redis
+docker run --name redis -p 6379:6379 -v /root/redis/data:/data -d redis:latest
+docker exec -it redis /bin/bash
 
 # 装个ubuntu玩玩
 # https://segmentfault.com/a/1190000009485188
