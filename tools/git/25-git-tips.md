@@ -565,3 +565,12 @@ $ git branch experimental SHA1_OF_HASH
 
 另一个方式就是使用 git fsck —lost-found ，悬空对象（dangling commit）是就是失去HEAD指针的提交，（删除的分支只是失去了HEAD指针成为悬空对象）
 
+#### 26. .gitignore无效
+
+```sh
+git rm -r --cached .
+git add .
+git commit -m "fixed untracked files"
+```
+
+
