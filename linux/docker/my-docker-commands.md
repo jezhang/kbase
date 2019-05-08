@@ -55,4 +55,7 @@ docker run -v /root/downloads:/root -t -i ubuntu:16.04 /bin/bash
 docker run --name ubuntu -d -v /root/downloads:/root -t -i ubuntu:16.04 /bin/bash
 docker exec -it ubuntu /bin/bash
 
+
+# suse linux 11
+docker run --name suse11 -p 7080:8080 -p 50003:22 -v /root/my-docker-files:/root/jezhang -d -t -i  yuzhenpin/suse-11-sp3-x86_64-java /bin/bash
 ```
