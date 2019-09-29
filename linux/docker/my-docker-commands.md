@@ -58,4 +58,8 @@ docker exec -it ubuntu /bin/bash
 
 # suse linux 11
 docker run --name suse11 -p 7080:8080 -p 50003:22 -v /root/my-docker-files:/root/jezhang -d -t -i  yuzhenpin/suse-11-sp3-x86_64-java /bin/bash
+
+# docker local registry
+docker run -d -p 5000:5000 -v /var/lib/registry:/var/lib/registry registry:2
+docker push HOSTNAME:5000/image:tag --insecure-registry HOSTNAME
 ```
