@@ -661,3 +661,11 @@ git branch -D
 ```sh
 git push origin --delete <branchName>
 ```
+
+查看分支是基于哪个commit id创建出来的
+
+```sh
+git show --summary `git merge-base dev master`
+gitk --all --select-commit=`git merge-base foo master`
+(where branch dev is the name of the branch you are looking for)
+```
