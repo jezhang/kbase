@@ -42,7 +42,9 @@ conda deactivate
 ### Step 7: Deletion of virtual environment
 
 ```sh
+conda info --envs
 conda remove -n envname -all
+conda env remove -n xxxx
 ```
 
 
