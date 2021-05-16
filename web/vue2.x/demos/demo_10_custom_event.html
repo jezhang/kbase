@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo 9 slot</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<div id="app">
+  <todo>
+    <todo-title slot="todo-title" :title="source_title"></todo-title>
+    <todo-items slot="todo-items" v-for="(_item, _index) in source_todo_items" :item="_item" :index="_index" v-on:custom_remove="removeItem(_index)" ></todo-items>
+  </todo>
+</div>
+
+<h3>自定义事件</h3>
+在组件中如何能操作Vue实例中的数据呢？通过使用事件分发，Vue提供了自定义事件的功能很好的
+帮助我们解决这个问题；使用this.$emit('自定义事件名', 参数)
+
+
+<script>
+  Vue.component("todo", {
+    template: ' <div>\
+                  <slot name="todo-title"></slot>\
+                  <ul>\
+                    <slot name="todo-items"></slot>\
+                  </ul>\
+                </div>'
+  });
+
+  Vue.component("todo-title", {
+    props: ['title'],
+    template: '<h3>{{ title }}</h3>'
+  });
+
+  Vue.component("todo-items", {
+    props: ['item','index'],
+    template: '<li>[{{index}}]. {{item}} <button @click="remove(index)">Remove</button></li>',
+    methods: {
+      remove: function (index) {
+        this.$emit('custom_remove', index)
+      }
+
+    }
+  });
+
+  var app = new Vue({
+    el : "#app",
+    data: {
+      source_title: 'jezhang to do list',
+      source_todo_items: ['Java', 'Python', 'Linux'],
+    },
+    methods: {
+      removeItem:function (index) {
+        console.log("Successfully removed " + this.source_todo_items[index]);
+        this.source_todo_items.splice(index, 1);
+      }
+    }
+  })
+</script>
+</body>
+</html>

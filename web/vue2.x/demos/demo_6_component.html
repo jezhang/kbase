@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo 6 components</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<div id="app">
+  <h3>{{ title }}</h3>
+  <ul>
+    <li-list v-for="item in items" v-bind:todo_item="item"></li-list>
+  </ul>
+
+  <hr/>
+
+  <ul-li-list v-bind:items="dicts"></ul-li-list>
+
+  <hr/>
+
+  <ul-li-list v-bind:items="dicts"></ul-li-list>
+</div>
+
+<script>
+  Vue.component('li-list', {
+    props: ['todo_item'],
+    data: function() {
+      return {
+        count: 0
+      }
+    },
+    template: '<li v-on:click="count++">{{ todo_item }} - ({{ count }})</li>'
+  })
+
+  Vue.component('ul-li-list', {
+    props: ['items'],
+    template: '<ul><li v-on:click="item.clicked++" v-for="item in items">{{ item.name }} - ({{ item.clicked }})</li></ul>'
+  })
+
+  var app = new Vue({
+    el: "#app",
+    data: {
+      title : 'My Study List',
+      dicts: [
+        {name:"Java", clicked:0},
+        {name:"Python", clicked:0},
+        {name:"Linux", clicked:0}
+      ],
+      items: ["Java", "Linux", "Python"]
+    }
+  })
+</script>
+</body>
+</html>

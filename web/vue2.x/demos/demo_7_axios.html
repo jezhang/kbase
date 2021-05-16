@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo 7 axios</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <style>
+    <!--v-clock解决闪烁问题-->
+    [v-clock] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app" v-clock>
+  <div>{{ info.id }}</div>
+  <div>{{ info.value }}</div>
+  <div><a v-bind:href="info.url">Link</a></div>
+  <div><a :href="info.url">Link</a></div>
+</div>
+
+<script>
+  var app = new Vue({
+    el: "#app",
+    data() {
+      return {
+        info: {
+          id: null,
+          value: null,
+          url: null
+        }
+      }
+    },
+    mounted () { // 钩子函数
+      axios.get('data.json').then(response => (this.info=response.data));
+    }
+  });
+</script>
+</body>
+</html>

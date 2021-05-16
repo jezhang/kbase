@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo 8 计算属性</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+
+<div id="app">
+  <div>currentTime1: {{currentTime1()}}，使用方法调用currentTime1()</div>
+  <div>currentTime2: {{currentTime2}}，使用计算属性调用currentTime2</div>
+</div>
+<div>
+  调用方法时候，每次都需要进行计算，如果有计算必然产生开销，如果结果是不经常变化的情况，就可以考虑将结果
+  缓存起来，采用计算属性可以很方便做到这一点。
+</div>
+<div>
+  计算属性的主要特征就是为了将不经常变化的计算结果进行缓存，以节约系统开销。
+</div>
+<script>
+  var app = new Vue({
+    el: "#app",
+    data: {
+      message: "计算属性"
+    },
+    methods: {
+      currentTime1: function () {
+        return Date.now();
+      }
+    },
+    computed: {
+      currentTime2: function () {
+        return Date.now();
+      }
+    }
+  })
+</script>
+</body>
+</html>
