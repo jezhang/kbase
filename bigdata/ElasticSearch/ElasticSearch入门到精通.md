@@ -742,9 +742,91 @@ GET /shopping/_search
 
 ### 聚合查询
 
+```json
+GET /shopping/_search
+{
+  "aggs": {  
+    "price_group": {
+      "terms": {
+        "field": "price"
+      }
+    }
+  },
+  "size": 1
+}
+
+
+GET /shopping/_search
+{
+  "aggs": {  
+    "price_avg": {
+      "avg": {
+        "field": "price"
+      }
+    }
+  }
+}
+```
+
 
 
 ### 映射关系
+
+是否分词查询关键字 keyword, text
+
+```json
+PUT user/_mapping
+{
+  "properties" : {
+    "name" : {
+      "type" : "text",
+      "index" : true
+    },
+    "sex" : {
+      "type": "keyword",
+      "index": true
+    },
+    "tel": {
+      "type": "keyword",
+      "index" : false
+    }
+  }
+}
+# response
+{
+  "acknowledged" : true
+}
+```
+
+添加数据并测试
+
+```json
+POST /user/_create/1001
+{
+  "name": "张三",
+  "sex": "男人",
+  "tel": "13813813813"
+  
+}
+
+GET /user/_search
+{
+  "query": {
+    "match": {
+      "name": "张"
+    }
+  }
+}
+
+GET /user/_search
+{
+  "query": {
+    "match": {
+      "sex": "男"
+    }
+  }
+}
+```
 
 
 

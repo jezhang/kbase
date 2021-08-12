@@ -508,7 +508,7 @@ GET test2
 }
 ```
 
-默认创建索引_doc
+默认创建文档_doc
 
 ```sh
 PUT /test3/_doc/1
@@ -536,6 +536,60 @@ PUT /test3/_doc/1
 }
 
 ```
+
+自定义过滤器，过滤html标签
+
+```sh
+PUT index_with_filter
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "html_text_analyzer": {
+          "tokenizer": "standard",
+          "char_filter": [
+            "html_char_filter"
+          ]
+        },
+        "html_keyword_analyzer": {
+          "tokenizer": "keyword",
+          "filter": [
+            "trim"
+          ],
+          "char_filter": [
+            "html_char_filter"
+          ]
+        }
+      },
+      "char_filter": {
+        "html_char_filter": {
+          "type": "html_strip"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "content": {
+        "type": "text",
+        "fields": {
+          "html_text": {
+            "search_analyzer": "simple",
+            "analyzer": "html_text_analyzer",
+            "type": "text"
+          },
+          "html_keyword": {
+            "analyzer": "html_keyword_analyzer",
+            "type": "text"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+
 
 #### Elasticsearch扩展命令
 
