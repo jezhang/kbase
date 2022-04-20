@@ -2,6 +2,7 @@
 了不起的 TypeScript 入门教程
 ========================
 
+https://segmentfault.com/a/1190000022876390
 
 ![](https://segmentfault.com/img/bVbH9l1)
 
