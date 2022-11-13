@@ -328,14 +328,145 @@ HOST: gitlab.org
 #### rules-changes-文件变化
 
 ```yml
-rules:
-  - changes:
-    - Dockerfile
-
+build:
+    stage: build
+    script:
+        - uname -a
+    rules:
+        - changes:
+          - Dockerfile
+          when: manual
+        - when: on_failure
 ```
+
+![](http://picbed.ztm.me/20221113180514.png)
 
 #### rules-changes-文件存在
 
+ - 接受文件路径数组。
+ - 当仓库中存在指定的文件时操作。
 
+```yml
+build:
+    stage: build
+    script:
+        - uname -a
+    rules:
+        - exists:
+          - Dockerfile
+          when: on_success
+```
+
+![](http://picbed.ztm.me/20221113183825.png)
+
+#### rules-allow_failure
+
+ - 使用allow_failure：true 
+ - rules：在不停止管道本身的情况下允许作业失败或手动作业等待操作。
+
+```yml
+job:
+  script: "echo Hello, Rules!"
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+      when: manual
+      allow_failure: true
+```
+
+在此示例中，如果第一个规则匹配，则作业将具有以下when:manual和allow_failure：true。
 
 ### workflow
+
+#### workflow-rules-管道创建
+
+ - 顶级workflow关键字适用于整个管道，并将确定是否创建管道。
+ - when：可以设置为always或never，如果未提供，则默认值always。
+
+```yml
+variables:
+    HOST: gitlab.org
+
+workflow:
+  rules:
+  - if: '$HOST == "abc.com"'
+    when: always
+  - when: never
+```
+
+pipeline 将不会运行。
+
+
+## Pipeline 语法4
+
+cache/artifacts/dependencies
+
+### cache-缓存
+
+ - 存储编译项目所需的运行时依赖项，指定项目工作空间中需要在job之间缓存的文件或目录。
+ - 全局cache定义在job之外，针对所有job生效。job中cache优先于全局。
+
+#### cache:paths
+
+ - 在job build中定义缓存，将会缓存target目录下的所有.jar文件。
+ - 当在全局定义了cache:paths会被job中覆盖。以下实例将缓存target目录。
+
+```yml
+build:
+  script: test
+  cache:
+    paths:
+      - target/*.jar
+```
+
+#### cache:key-缓存标记
+
+ - 为缓存做个标记，可以配置job、分支为key来实现分支、作业特定的缓存。
+ - 为不同job定义了不同的cache:key时，会为每个job分配一个独立的cache。
+ - cache：key变量可以使用任何预定义变量，默认default。
+ - 从GitLab 9.0开始，默认情况下所有内容都在管道和作业之间共享。
+
+按照分支设置缓存
+
+```yml
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+```
+
+#### cache:key:files-文件变化自动创建缓存
+
+files：文件发生变化自动重新生成缓存（files最多指定两个文件），提交的时候检查指定的文件。根据指定的文件生成密钥计算SHA校验和，如果文件未改变值为default。
+
+```yml
+cache:
+  key:
+    files:
+      - Gemfile.lock
+      - package.json
+    paths:
+      - vendor/ruby
+      - node_modules
+```
+
+#### cache:key:prefix-组合生成SHA校验值
+
+ - prefix：允许给定prefix的值与指定文件生成的秘钥组合。
+ - 在这里定义了全局的cache，如果文件发生变化则值为rspec-xxx111111111222222，未发生变化为rspec-default。
+
+```yml
+cache:
+  key:
+    files:
+      - Gemfile.lock
+    prefix: ${CI_JOB_NAME}
+  paths:
+    - vendor/ruby
+
+rspec:
+  script:
+    - bundle exec rspec
+```
+
+#### cache:policy-缓存策略
+
+ - 默认：在执行开始时下载文件，并在结束时重新上传文件。
+ - policy：pul1跳过下载步骤，policy：push跳过上传步骤。
