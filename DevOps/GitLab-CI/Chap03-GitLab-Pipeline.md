@@ -469,4 +469,4 @@ rspec:
 #### cache:policy-缓存策略
 
  - 默认：在执行开始时下载文件，并在结束时重新上传文件。
- - policy：pul1跳过下载步骤，policy：push跳过上传步骤。
+ - policy：pull跳过下载缓存步骤，policy：push跳过上传缓存步骤。
