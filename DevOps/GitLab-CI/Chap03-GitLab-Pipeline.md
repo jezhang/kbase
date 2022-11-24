@@ -469,4 +469,145 @@ rspec:
 #### cache:policy-缓存策略
 
  - 默认：在执行开始时下载文件，并在结束时重新上传文件。
- - policy：pull跳过下载缓存步骤，policy：push跳过上传缓存步骤。
+ - policy：pull跳过下载步骤，policy：push跳过上传步骤。
+
+
+## Pipeline 语法5
+
+artifacts/dependencies
+
+### artifacts-制品
+
+用于指定在作业成功或者失败时应附加到作业的文件或目录的列表。作业完成后，工件将被发送到GitLab，并可在GitLab UI中下载。
+
+
+```yml
+artifacts:
+  paths:
+    - target/
+```
+
+### artifacts-制品创建
+
+```yml
+default-job:
+  script:
+    - mvn test -U
+  except:
+    - tags
+
+release-job:
+  script:
+    - mvn package -U
+  artifacts:
+    paths:
+      - target/*.war
+    only:
+      - tags
+```
+
+### artifacts: expose_as-MR展示制品
+
+关键字expose_as可用于在合并请求UI中公开作业工件。每个合并请求最多可以公开10个作业工件。
+
+```yml
+test:
+  script:
+    - echo 1
+  artifacts:
+    expose_as: 'artifact 1'
+    paths:
+      - path/to/file.txt
+```
+
+### artifacts:name-制品名称
+
+通过name指令定义所创建的工件存档的名称。可以为每个档案使用唯一的名称。artifacts：name默认名称是artifacts，T载artifacts改为artifacts.zip。
+
+```yml
+job:
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - binaries/
+```
+
+### artifacts:when-制品创建条件
+
+用于在作业失败时或成功而上传工件。
+ - on_success仅在作业成功时上载工件默认值。
+ - on_failure仅在作业失败时上载工件。
+ - always上载工件，无论作业状态如何。
+
+ ```yml
+job:
+  artifacts:
+    when: on_failure
+
+
+job:
+  artifacts:
+    when: on_success
+
+job:
+  artifacts:
+    when: always
+ ```
+
+ ### artifacts:expire_in-制品保留时间
+
+ 制品的有效期，从上传和存储到GitLab的时间开始算起。如果未定义过期时间，则默认为30天。expire_in的值以秒为单位的经过时间，除非提供了单位。
+
+ ```sh
+'42'
+'3 mins 4 sec'
+'2 hrs 20 min'
+'2h20min'
+'6 mos 1 day'
+'47 yrs 6 mos and 4d'
+'3 weeks and 2 days'
+ ```
+
+ ```yml
+job:
+  artifacts:
+    expire_in: 1 week
+```
+
+### artifacts: reports:junit-单元测试报告
+
+### artifacts: reports:junit-覆盖率报告
+
+收集junit单元测试报告，收集的JUnit报告将作为工件上传到GitLab，并将自动显示在合并请求中。
+
+```yml
+build:
+  stage: build
+  tags:
+    - build
+  only:
+    - master
+  script:
+    - mvn test
+    - mvn cobertura:cobertura
+    - ls target
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    when: on_success
+    expose_as: 'artifact 1'
+    paths:
+      - target/*.jar
+    reports:
+      junit: target/surefire-reports/TEST-*.xml
+      cobertura: target/site/cobertura/coverage.xml
+```
+
+单元测试报告页，需要更改系统设置。此选项可能会加大资源占用，默认禁用了需要启用。
+
+```sh
+su - git
+gitlab-rails console
+Feature.enable
+irb(main):001:0>Feature.enable(:junit_pipeline_view)
+=> true
+```
