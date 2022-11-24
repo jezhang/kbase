@@ -611,3 +611,16 @@ Feature.enable
 irb(main):001:0>Feature.enable(:junit_pipeline_view)
 => true
 ```
+
+### dependencies-获取制品
+
+定义要获取工件的作业列表，只能从当前阶段之前执行的阶段定义作业。定义一个空数组将跳过下载该作业的任何工件不会考虑先前作业的状态，因此，如果它失败或是未运行的手动作业，则不会发生错误。如果设置为依赖项的作业的工件已过期或删除，那么依赖项作业将失败。
+
+```yml
+unittest:
+  dependencies:
+    - build
+  stage: test
+  script:
+    - echo "run test"
+```
