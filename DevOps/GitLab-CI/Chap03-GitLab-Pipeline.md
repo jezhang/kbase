@@ -624,3 +624,140 @@ unittest:
   script:
     - echo "run test"
 ```
+
+
+## Pipeline 语法6
+
+needs/include/extends/trigger
+
+### needs-阶段并行
+
+可无序执行作业，无需按照阶段顺序运行某些作业，可以让多个阶段同时运行。
+如果needs：设置为指向因only/except规则而未实例化的作业，或者不存在，则创建管道时会出现YAML错误。
+
+### include-引入文件
+
+#### include:local-引入本地配置
+
+可以允许引入外部YAML文件，文件具有扩展名.yml或.yaml。
+
+使用合并功能可以自定义和覆盖包含本地定义的CI/CD配置。
+
+引入同一存储库中的文件，使用相对于根目录的完整路径进行引用，与配置文件在同一分支上使用。
+
+
+创建ci/localci.yml文件，定义一个作业用于发布
+```yml
+stage:
+  - deploy
+deploy-job:
+  stage: deploy
+  script:
+    - echo 'deploy'
+```
+
+在.gitlab-ci.yml引入本地的CI文件`ci/localci.yml`。
+
+```yml
+include
+  local: 'ci/localci.yml'
+```
+
+#### include:file
+
+引入一个其它项目的文件
+
+```yml
+include
+  project: demo/demo-project
+  ref: master
+  file: '.gitlab-ci.yml'
+
+#### include:template-引入官方模板
+
+只能使用gitlab官方提供的模板
+<https://gitlab.com/gitlab-org/gitlab/-/tree/master/lib/gitlab/ci/templates>
+
+```yml
+include:
+  - template: Auto-DevOps.gitlab-ci.yml
+```
+
+#### include:remote-引入远程配置
+
+用于通过HTTP/HTTPS包含来自其他位置的文件，并使用完整URL进行引用.远程文件必须可以通过简单的GET请求公开访问，因为不支持远程URL中的身份验证架构。
+
+```yml
+include:
+  - remote: 'https://gitlab.com/awesome-project/raw/master/.gitlab-ci-template.yml'
+```
+
+### 自定义CI配置文件路径
+
+默认情况下，我们在项目的根目录中查找`.gitlab-ci.yml`文件，如果需要，也可以指定备用路径和文件名，包括项目外部的位置
+
+ - .gitlab-ci.yml (default)
+ - .my-custom-file.yml
+ - my/path/.gitlab-ci.yml
+ - my/path/.my-custom-file.yml
+ - http://example.com/generate/ci/config.yml
+ - .gitlab-ci.yml@mygroup/another-project
+ - my/path/.my-custom-file.yml@mygroup/another-project
+
+将配置文件托管在单独的项目中，可以更严格地控制配置文件，创建一个公共项目来承载配置文件，仅向被允许编辑文件的用户授予对项目的写权限。其他用户和项目将能够访问配置文件而无需对其进行编辑。
+
+> Settings > CI/CD > Expand General pipelines > CI/CD configuration file
+
+### extends-继承作业配置
+
+```yml
+stages:
+  - test
+variables:
+  RSPEC: 'test'
+
+.tests:
+  script: echo "mvn test"
+  stage: test
+  only:
+    refs:
+      - branches
+
+testjob:
+  extends: .test
+  script: echo "mvn clean test"
+  only:
+    variables:
+      - $RSPEC
+```
+合并后
+```yml
+testjob:
+  stage: test
+  script: echo "mvn clean test"
+  only:
+    variables:
+      - $RSPEC
+    refs:
+      - branches
+```
+
+### extends & include
+
+这将运行名为useTemplate的作业，该作业运行echo Hello！如.template作业中所定义，并使用本地作业中所定义的alpine Docker映像.
+
+aa.yml
+
+```yml
+.template:
+  script:
+    - echo Hello!
+```
+
+```yml
+include aa.yml
+
+useTemplate:
+  image: alpine
+  extends: .template
+```
